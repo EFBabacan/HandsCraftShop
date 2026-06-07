@@ -1,0 +1,20 @@
+# .NET build output
+bin/
+obj/
+*.user
+
+# Rider / VS
+.idea/
+.vs/
+
+# Uploaded images (Fotograf API runtime ciktilari) - .gitkeep haric
+**/wwwroot/images/*
+!**/wwwroot/images/.gitkeep
+
+# Visual Studio kullanici/gecici
+*.suo
+.vscode/
+
+# OS
+Thumbs.db
+.DS_Store

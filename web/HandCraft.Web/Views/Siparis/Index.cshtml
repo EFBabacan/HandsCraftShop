@@ -1,0 +1,70 @@
+@model List<HandCraft.Web.Models.SiparisVm>
+@{
+    ViewData["Title"] = "Siparişlerim";
+
+    // Timeline adimlari (Iptal haric). Durum kodu: 0..4 bu adimlara denk gelir.
+    var adimlar = new[] { "Beklemede", "Onaylandı", "Hazırlanıyor", "Kargoda", "Teslim Edildi" };
+}
+
+<h2>Siparişlerim</h2>
+
+@if (Model.Count == 0)
+{
+    <p class="text-muted">Henüz siparişiniz yok.</p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">Alışverişe Başla</a>
+}
+else
+{
+    @foreach (var s in Model)
+    {
+        var iptal = s.Durum == 5;
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Sipariş #@s.Id — @s.OlusturmaTarihi.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+                <span>
+                    <span class="badge @(iptal ? "bg-danger" : "bg-primary") me-2">@s.DurumMetni</span>
+                    <strong>@s.ToplamTutar.ToString("N2") ₺</strong>
+                </span>
+            </div>
+            <div class="card-body">
+                @if (iptal)
+                {
+                    <div class="alert alert-danger py-2">Bu sipariş iptal edildi.</div>
+                }
+                else
+                {
+                    @* Yatay timeline *@
+                    <div class="d-flex justify-content-between text-center mb-3" style="max-width:700px">
+                        @for (int i = 0; i < adimlar.Length; i++)
+                        {
+                            var tamam = i <= s.Durum;
+                            var renk = tamam ? "text-success" : "text-muted";
+                            <div class="flex-fill">
+                                <div class="@renk" style="font-size:1.5rem">@(tamam ? "●" : "○")</div>
+                                <div class="small @renk">@adimlar[i]</div>
+                            </div>
+                            if (i < adimlar.Length - 1)
+                            {
+                                var cizgi = (i < s.Durum) ? "border-success" : "border-secondary";
+                                <div class="align-self-start mt-2 flex-fill border-top @cizgi" style="min-width:20px"></div>
+                            }
+                        }
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(s.KargoKodu))
+                {
+                    <p class="mb-2"><span class="badge bg-dark">📦 Kargo Takip: @s.KargoKodu</span></p>
+                }
+
+                <p class="text-muted mb-2">@s.Il / @s.Ilce — @s.AcikAdres</p>
+                <ul class="mb-0">
+                    @foreach (var u in s.Urunler)
+                    {
+                        <li>@u.UrunAdi — @u.Adet × @u.Fiyat.ToString("N2") ₺</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+}

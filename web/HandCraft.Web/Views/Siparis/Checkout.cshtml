@@ -1,0 +1,95 @@
+@model HandCraft.Web.Models.CheckoutVm
+@{
+    ViewData["Title"] = "Ödeme";
+    var sepet = Model.Sepet;
+}
+
+<h2>Ödeme</h2>
+
+<div class="row">
+    <div class="col-md-7">
+        <form asp-controller="Siparis" asp-action="Odeme" method="post">
+            @Html.AntiForgeryToken()
+            <h5>Teslimat Adresi</h5>
+            <div class="mb-2">
+                <label class="form-label">İl</label>
+                <input name="il" class="form-control" required />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">İlçe</label>
+                <input name="ilce" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Açık Adres</label>
+                <textarea name="acikAdres" class="form-control" rows="2" required></textarea>
+            </div>
+
+            <h5>Kart Bilgileri</h5>
+            <div class="mb-2">
+                <label class="form-label">Kart Sahibi</label>
+                <input name="kartSahibi" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Kart No</label>
+                <input name="kartNo" class="form-control" value="4111111111111111" required />
+            </div>
+
+            @* Uygulanan indirim kodu odeme ile birlikte gonderilir *@
+            <input type="hidden" name="indirimKodu" value="@Model.IndirimKodu" />
+
+            <button type="submit" class="btn btn-success">
+                Ödemeyi Tamamla (@Model.GenelToplam.ToString("N2") ₺)
+            </button>
+        </form>
+    </div>
+    <div class="col-md-5">
+        <div class="card mb-3">
+            <div class="card-header">Sipariş Özeti</div>
+            <ul class="list-group list-group-flush">
+                @foreach (var item in sepet.Urunler)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>@item.UrunAdi × @item.Adet</span>
+                        <span>@((item.Fiyat * item.Adet).ToString("N2")) ₺</span>
+                    </li>
+                }
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Ara Toplam</span>
+                    <span>@Model.AraToplam.ToString("N2") ₺</span>
+                </li>
+                @if (Model.IndirimOrani > 0)
+                {
+                    <li class="list-group-item d-flex justify-content-between text-success">
+                        <span>İndirim (%@Model.IndirimOrani)</span>
+                        <span>-@Model.IndirimTutari.ToString("N2") ₺</span>
+                    </li>
+                }
+                <li class="list-group-item d-flex justify-content-between fw-bold">
+                    <span>Genel Toplam</span>
+                    <span>@Model.GenelToplam.ToString("N2") ₺</span>
+                </li>
+            </ul>
+        </div>
+
+        @* Indirim kodu formu (GET ile Checkout'a doner, kodu dogrular) *@
+        <div class="card">
+            <div class="card-header">İndirim Kodu</div>
+            <div class="card-body">
+                <form asp-controller="Siparis" asp-action="Checkout" method="get" class="row g-2">
+                    <div class="col">
+                        <input name="indirimKodu" class="form-control" placeholder="örn. BAHAR15"
+                               value="@Model.IndirimKodu" />
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-outline-primary">Uygula</button>
+                    </div>
+                </form>
+                @if (!string.IsNullOrEmpty(Model.IndirimMesaji))
+                {
+                    var renk = Model.IndirimOrani > 0 ? "text-success" : "text-danger";
+                    <p class="mt-2 mb-0 small @renk">@Model.IndirimMesaji</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

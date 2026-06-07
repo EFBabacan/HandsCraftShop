@@ -1,0 +1,23 @@
+# MS SQL Server (Bölüm 3: 1433) — [#4 Siparis]
+# DİKKAT: SA parolası güçlü olmalı yoksa container açılmaz (Bölüm 9 tuzağı).
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: handcraft-mssql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "HandCraft!2026"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+    networks:
+      - handcraft-net
+
+volumes:
+  mssql-data:
+
+networks:
+  handcraft-net:
+    name: handcraft-net

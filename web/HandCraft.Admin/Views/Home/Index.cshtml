@@ -1,0 +1,32 @@
+@{
+    ViewData["Title"] = "Panel";
+}
+
+<h2 class="mb-4">Yönetim Paneli</h2>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
+    <div class="col">
+        <a class="card text-decoration-none text-dark h-100" asp-controller="Urun" asp-action="Index">
+            <div class="card-body text-center"><h1>📦</h1><h5>Ürünler</h5><p class="text-muted small">Ürün ekle/düzenle/sil + görsel</p></div>
+        </a>
+    </div>
+    <div class="col">
+        <a class="card text-decoration-none text-dark h-100" asp-controller="Kategori" asp-action="Index">
+            <div class="card-body text-center"><h1>🏷️</h1><h5>Kategoriler</h5><p class="text-muted small">Kategori yönetimi</p></div>
+        </a>
+    </div>
+    <div class="col">
+        <a class="card text-decoration-none text-dark h-100" asp-controller="Indirim" asp-action="Index">
+            <div class="card-body text-center"><h1>%</h1><h5>İndirimler</h5><p class="text-muted small">İndirim kodları</p></div>
+        </a>
+    </div>
+    <div class="col">
+        <a class="card text-decoration-none text-dark h-100" asp-controller="Siparis" asp-action="Index">
+            <div class="card-body text-center"><h1>🧾</h1><h5>Siparişler</h5><p class="text-muted small">Tüm siparişler + onay</p></div>
+        </a>
+    </div>
+    <div class="col">
+        <a class="card text-decoration-none text-dark h-100" asp-controller="Kullanici" asp-action="Index">
+            <div class="card-body text-center"><h1>👤</h1><h5>Kullanıcılar</h5><p class="text-muted small">Müşteri/admin yönetimi</p></div>
+        </a>
+    </div>
+</div>

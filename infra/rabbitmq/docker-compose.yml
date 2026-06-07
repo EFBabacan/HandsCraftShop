@@ -1,0 +1,22 @@
+# RabbitMQ + management UI (Bölüm 3: 5672, management 15672) — [#10 Odeme→Siparis]
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: handcraft-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - handcraft-net
+
+volumes:
+  rabbitmq-data:
+
+networks:
+  handcraft-net:
+    name: handcraft-net

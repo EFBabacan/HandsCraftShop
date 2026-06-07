@@ -1,0 +1,51 @@
+@model HandCraft.Web.Models.ProfilVm
+@{
+    ViewData["Title"] = "Hesabım";
+}
+
+<h2>Hesabım</h2>
+
+@if (TempData["Mesaj"] is not null)
+{
+    <div class="alert alert-success">@TempData["Mesaj"]</div>
+}
+@if (TempData["Hata"] is not null)
+{
+    <div class="alert alert-danger">@TempData["Hata"]</div>
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header">Bilgilerim</div>
+            <div class="card-body">
+                <form asp-controller="Profil" asp-action="Guncelle" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-2">
+                        <label class="form-label">Kullanıcı Adı</label>
+                        <input class="form-control" value="@Model.KullaniciAdi" readonly />
+                    </div>
+                    <div class="mb-2"><label class="form-label">Ad</label><input name="ad" class="form-control" value="@Model.Ad" /></div>
+                    <div class="mb-2"><label class="form-label">Soyad</label><input name="soyad" class="form-control" value="@Model.Soyad" /></div>
+                    <div class="mb-3"><label class="form-label">E-posta</label><input name="email" type="email" class="form-control" value="@Model.Email" /></div>
+                    <button type="submit" class="btn btn-primary">Bilgileri Güncelle</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Parola Değiştir</div>
+            <div class="card-body">
+                <form asp-controller="Profil" asp-action="SifreDegistir" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label class="form-label">Yeni Parola</label>
+                        <input name="yeniParola" type="password" class="form-control" required />
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary">Parolayı Değiştir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,53 @@
+@model HandCraft.Web.Models.SepetVm
+@{
+    ViewData["Title"] = "Sepetim";
+}
+
+<h2>Sepetim</h2>
+
+@if (Model.Urunler.Count == 0)
+{
+    <p class="text-muted">Sepetiniz boş.</p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">Alışverişe Başla</a>
+}
+else
+{
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Ürün</th>
+                <th>Fiyat</th>
+                <th>Adet</th>
+                <th>Ara Toplam</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Urunler)
+            {
+                <tr>
+                    <td>@item.UrunAdi</td>
+                    <td>@item.Fiyat.ToString("N2") ₺</td>
+                    <td>@item.Adet</td>
+                    <td>@((item.Fiyat * item.Adet).ToString("N2")) ₺</td>
+                    <td>
+                        <form asp-controller="Sepet" asp-action="Sil" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="urunId" value="@item.UrunId" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Çıkar</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="3" class="text-end">Toplam:</th>
+                <th colspan="2">@Model.ToplamTutar.ToString("N2") ₺</th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <a asp-controller="Siparis" asp-action="Checkout" class="btn btn-success">Ödemeye Geç</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Alışverişe Devam</a>
+}

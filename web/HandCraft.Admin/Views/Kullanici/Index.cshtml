@@ -1,0 +1,40 @@
+@model List<HandCraft.Admin.Models.KullaniciVm>
+@{
+    ViewData["Title"] = "Kullanıcılar";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Kullanıcılar</h2>
+    <a class="btn btn-primary" asp-action="Ekle">+ Yeni Kullanıcı</a>
+</div>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr><th>Kullanıcı Adı</th><th>Ad Soyad</th><th>E-posta</th><th>Roller</th><th>Durum</th><th></th></tr>
+    </thead>
+    <tbody>
+        @foreach (var k in Model)
+        {
+            <tr>
+                <td>@k.KullaniciAdi</td>
+                <td>@k.Ad @k.Soyad</td>
+                <td>@k.Email</td>
+                <td>
+                    @foreach (var r in k.Roller.Where(r => r == "admin" || r == "customer"))
+                    {
+                        <span class="badge @(r == "admin" ? "bg-danger" : "bg-secondary")">@r</span>
+                    }
+                </td>
+                <td>@(k.Aktif ? "Aktif" : "Pasif")</td>
+                <td class="text-end">
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="Duzenle" asp-route-id="@k.Id">Düzenle</a>
+                    <form asp-action="Sil" method="post" class="d-inline" onsubmit="return confirm('@k.KullaniciAdi silinsin mi?');">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@k.Id" />
+                        <button class="btn btn-sm btn-outline-danger">Sil</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

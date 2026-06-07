@@ -1,0 +1,36 @@
+# MongoDB + mongo-express (Bölüm 3: Mongo 27017, mongo-express 8081) — [#5 Katalog]
+services:
+  mongo:
+    image: mongo:7
+    container_name: handcraft-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - handcraft-net
+
+  mongo-express:
+    image: mongo-express:1.0
+    container_name: handcraft-mongo-express
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+      ME_CONFIG_MONGODB_URL: mongodb://root:root@mongo:27017/
+      ME_CONFIG_BASICAUTH: "false"
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongo
+    networks:
+      - handcraft-net
+
+volumes:
+  mongo-data:
+
+networks:
+  handcraft-net:
+    name: handcraft-net

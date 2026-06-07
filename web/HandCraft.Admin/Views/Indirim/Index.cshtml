@@ -1,0 +1,39 @@
+@model List<HandCraft.Admin.Models.IndirimVm>
+@{
+    ViewData["Title"] = "İndirimler";
+}
+
+<h2>İndirim Kodları</h2>
+
+<form asp-action="Ekle" method="post" class="row g-2 col-md-8 mb-4">
+    @Html.AntiForgeryToken()
+    <div class="col"><input name="Kod" class="form-control" placeholder="Kod (BAHAR15)" required /></div>
+    <div class="col"><input name="Oran" type="number" step="0.01" class="form-control" placeholder="Oran %" required /></div>
+    <div class="col"><input name="UserId" class="form-control" placeholder="UserId (boş=GENEL)" /></div>
+    <div class="col-auto form-check d-flex align-items-center">
+        <input name="IsActive" value="true" type="checkbox" class="form-check-input me-1" checked /> Aktif
+    </div>
+    <div class="col-auto"><button class="btn btn-primary">Ekle</button></div>
+</form>
+
+<table class="table table-striped">
+    <thead><tr><th>Kod</th><th>Oran</th><th>UserId</th><th>Aktif</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var i in Model)
+        {
+            <tr>
+                <td>@i.Kod</td>
+                <td>%@i.Oran</td>
+                <td>@i.UserId</td>
+                <td>@(i.IsActive ? "✓" : "✗")</td>
+                <td class="text-end">
+                    <form asp-action="Sil" method="post" class="d-inline" onsubmit="return confirm('Silinsin mi?');">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@i.Id" />
+                        <button class="btn btn-sm btn-outline-danger">Sil</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

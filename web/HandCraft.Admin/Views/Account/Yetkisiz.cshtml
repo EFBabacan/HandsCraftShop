@@ -1,0 +1,9 @@
+@{
+    ViewData["Title"] = "Yetkisiz";
+}
+
+<div class="text-center py-5">
+    <h1 class="display-5 text-danger">⛔ Yetkisiz Erişim</h1>
+    <p class="lead text-muted">Bu panele yalnızca <strong>admin</strong> rolündeki kullanıcılar erişebilir.</p>
+    <a asp-controller="Account" asp-action="Logout" class="btn btn-outline-secondary">Çıkış Yap</a>
+</div>

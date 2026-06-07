@@ -1,0 +1,37 @@
+# Indirim PostgreSQL + pgAdmin (Bölüm 3: Indirim Postgres 5433, pgAdmin 8888) — [#6 Indirim]
+# DİKKAT: Keycloak Postgres (5432) ile ayrı tutulur (Bölüm 9 tuzağı).
+services:
+  indirim-db:
+    image: postgres:16
+    container_name: handcraft-indirim-db
+    environment:
+      POSTGRES_DB: indirim
+      POSTGRES_USER: indirim
+      POSTGRES_PASSWORD: indirim
+    ports:
+      - "5433:5432"
+    volumes:
+      - indirim-db-data:/var/lib/postgresql/data
+    networks:
+      - handcraft-net
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: handcraft-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@handcraft.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "8888:80"
+    depends_on:
+      - indirim-db
+    networks:
+      - handcraft-net
+
+volumes:
+  indirim-db-data:
+
+networks:
+  handcraft-net:
+    name: handcraft-net

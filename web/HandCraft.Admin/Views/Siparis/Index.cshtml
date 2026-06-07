@@ -1,0 +1,86 @@
+@model List<HandCraft.Admin.Models.SiparisVm>
+@{
+    ViewData["Title"] = "Siparişler";
+
+    // durum -> rozet rengi
+    string Rozet(int d) => d switch {
+        1 => "bg-info text-dark", 2 => "bg-primary", 3 => "bg-warning text-dark",
+        4 => "bg-success", 5 => "bg-danger", _ => "bg-secondary"
+    };
+}
+
+<h2>Tüm Siparişler</h2>
+
+@if (Model.Count == 0)
+{
+    <p class="text-muted">Henüz sipariş yok.</p>
+}
+else
+{
+    @foreach (var s in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Sipariş #@s.Id — @s.OlusturmaTarihi.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+                <span>
+                    <span class="badge @Rozet(s.Durum) me-2">@s.DurumMetni</span>
+                    <strong>@s.ToplamTutar.ToString("N2") ₺</strong>
+                </span>
+            </div>
+            <div class="card-body">
+                <p class="text-muted small mb-1">Müşteri: @s.UserId</p>
+                <p class="text-muted mb-1">@s.Il / @s.Ilce — @s.AcikAdres</p>
+                @if (!string.IsNullOrEmpty(s.KargoKodu))
+                {
+                    <p class="mb-2"><span class="badge bg-dark">Kargo: @s.KargoKodu</span></p>
+                }
+                <ul>
+                    @foreach (var u in s.Urunler)
+                    {
+                        <li>@u.UrunAdi — @u.Adet × @u.Fiyat.ToString("N2") ₺</li>
+                    }
+                </ul>
+
+                @* Duruma gore bir sonraki adim *@
+                @if (s.Durum == 0) // Beklemede
+                {
+                    <form asp-action="DurumGuncelle" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@s.Id" /><input type="hidden" name="durum" value="1" />
+                        <button class="btn btn-sm btn-info">Onayla</button>
+                    </form>
+                    <form asp-action="DurumGuncelle" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@s.Id" /><input type="hidden" name="durum" value="5" />
+                        <button class="btn btn-sm btn-outline-danger">İptal</button>
+                    </form>
+                }
+                else if (s.Durum == 1) // Onaylandi
+                {
+                    <form asp-action="DurumGuncelle" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@s.Id" /><input type="hidden" name="durum" value="2" />
+                        <button class="btn btn-sm btn-warning">Hazırlanıyor</button>
+                    </form>
+                }
+                else if (s.Durum == 2) // Hazirlaniyor -> kargo kodu gir
+                {
+                    <form asp-action="DurumGuncelle" method="post" class="row g-2 align-items-center">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@s.Id" /><input type="hidden" name="durum" value="3" />
+                        <div class="col-auto"><input name="kargoKodu" class="form-control form-control-sm" placeholder="Kargo takip kodu" required /></div>
+                        <div class="col-auto"><button class="btn btn-sm btn-primary">Kargoya Ver</button></div>
+                    </form>
+                }
+                else if (s.Durum == 3) // Kargoda
+                {
+                    <form asp-action="DurumGuncelle" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@s.Id" /><input type="hidden" name="durum" value="4" />
+                        <button class="btn btn-sm btn-success">Teslim Edildi</button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+}

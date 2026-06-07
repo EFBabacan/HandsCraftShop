@@ -1,0 +1,10 @@
+@{
+    ViewData["Title"] = "Sipariş Alındı";
+}
+
+<div class="text-center py-5">
+    <h1 class="display-5 text-success">✓ Siparişiniz Alındı!</h1>
+    <p class="lead text-muted">Ödemeniz başarıyla tamamlandı. Siparişiniz hazırlanıyor.</p>
+    <a asp-controller="Siparis" asp-action="Index" class="btn btn-primary">Siparişlerim</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Vitrine Dön</a>
+</div>

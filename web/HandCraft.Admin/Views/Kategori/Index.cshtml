@@ -1,0 +1,31 @@
+@model List<HandCraft.Admin.Models.KategoriVm>
+@{
+    ViewData["Title"] = "Kategoriler";
+}
+
+<h2>Kategoriler</h2>
+
+<form asp-action="Ekle" method="post" class="row g-2 col-md-6 mb-4">
+    @Html.AntiForgeryToken()
+    <div class="col"><input name="ad" class="form-control" placeholder="Yeni kategori adı" required /></div>
+    <div class="col-auto"><button class="btn btn-primary">Ekle</button></div>
+</form>
+
+<table class="table table-striped col-md-6">
+    <thead><tr><th>Ad</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var k in Model)
+        {
+            <tr>
+                <td>@k.Ad</td>
+                <td class="text-end">
+                    <form asp-action="Sil" method="post" class="d-inline" onsubmit="return confirm('Silinsin mi?');">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@k.Id" />
+                        <button class="btn btn-sm btn-outline-danger">Sil</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

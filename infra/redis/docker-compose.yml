@@ -1,0 +1,30 @@
+# Redis + redis-commander (Bölüm 3: Redis 6379, redis-commander 8082) — [#8 Sepet]
+services:
+  redis:
+    image: redis:7
+    container_name: handcraft-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - handcraft-net
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: handcraft-redis-commander
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    ports:
+      - "8082:8081"
+    depends_on:
+      - redis
+    networks:
+      - handcraft-net
+
+volumes:
+  redis-data:
+
+networks:
+  handcraft-net:
+    name: handcraft-net

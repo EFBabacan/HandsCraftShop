@@ -1,0 +1,110 @@
+@model HandCraft.Web.Models.UrunDetayVm
+@{
+    var urun = Model.Urun;
+    var yorumlar = Model.Yorumlar;
+    ViewData["Title"] = urun.Ad;
+
+    // 5 yildizlik gosterim yardimcisi
+    Func<int, string> yildiz = (puan) => string.Concat(Enumerable.Repeat("★", puan)) + string.Concat(Enumerable.Repeat("☆", 5 - puan));
+}
+
+<div class="row">
+    <div class="col-md-5">
+        @if (!string.IsNullOrEmpty(urun.ImageUrl))
+        {
+            <img src="@urun.ImageUrl" class="img-fluid rounded" alt="@urun.Ad" />
+        }
+        else
+        {
+            <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height:300px">
+                <span class="text-muted">Görsel yok</span>
+            </div>
+        }
+    </div>
+    <div class="col-md-7">
+        <h2>@urun.Ad</h2>
+        <span class="badge bg-secondary mb-2">@urun.KategoriAdi</span>
+        @if (yorumlar.YorumSayisi > 0)
+        {
+            <div class="mb-2">
+                <span class="text-warning fs-5">@yildiz((int)Math.Round(yorumlar.OrtalamaPuan))</span>
+                <span class="text-muted">@yorumlar.OrtalamaPuan / 5 (@yorumlar.YorumSayisi yorum)</span>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted small">Henüz yorum yok.</p>
+        }
+        <p>@urun.Aciklama</p>
+        <h3 class="text-primary">@urun.Fiyat.ToString("N2") ₺</h3>
+        <p class="text-muted">Stok: @urun.Stok adet</p>
+
+        <form asp-controller="Sepet" asp-action="Ekle" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="urunId" value="@urun.Id" />
+            <button type="submit" class="btn btn-primary" @(urun.Stok <= 0 ? "disabled" : "")>Sepete Ekle</button>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Vitrine Dön</a>
+        </form>
+    </div>
+</div>
+
+<hr class="my-4" />
+
+<div class="row">
+    <div class="col-md-7">
+        <h4>Yorumlar (@yorumlar.YorumSayisi)</h4>
+        @if (yorumlar.Yorumlar.Count == 0)
+        {
+            <p class="text-muted">İlk yorumu sen yap!</p>
+        }
+        else
+        {
+            foreach (var y in yorumlar.Yorumlar)
+            {
+                <div class="border-bottom py-2">
+                    <div class="d-flex justify-content-between">
+                        <strong>@y.KullaniciAdi</strong>
+                        <span class="text-warning">@yildiz(y.Puan)</span>
+                    </div>
+                    <div class="small text-muted">@y.Tarih.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</div>
+                    <p class="mb-0">@y.Metin</p>
+                </div>
+            }
+        }
+    </div>
+    <div class="col-md-5">
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <div class="card">
+                <div class="card-header">Yorum Yap</div>
+                <div class="card-body">
+                    <form asp-controller="Home" asp-action="YorumEkle" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="urunId" value="@urun.Id" />
+                        <div class="mb-2">
+                            <label class="form-label">Puan</label>
+                            <select name="puan" class="form-select" required>
+                                <option value="5">★★★★★ (5)</option>
+                                <option value="4">★★★★☆ (4)</option>
+                                <option value="3">★★★☆☆ (3)</option>
+                                <option value="2">★★☆☆☆ (2)</option>
+                                <option value="1">★☆☆☆☆ (1)</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Yorum</label>
+                            <textarea name="metin" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Gönder</button>
+                    </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-light border">
+                Yorum yapmak için <a asp-controller="Account" asp-action="Login">giriş yapın</a>.
+            </div>
+        }
+    </div>
+</div>
